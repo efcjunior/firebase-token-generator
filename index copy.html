@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"> <!-- Declaração da codificação de caracteres -->
+    <title>Firebase App Check Example</title>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+        import { initializeAppCheck, ReCaptchaV3Provider, getToken } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app-check.js";
+
+        /*const firebaseConfig = {
+            apiKey: "AIzaSyBbE5FF2LeIHKDxeL7KSahCASQq5Gwrl5U",
+            authDomain: "medco-681ed.firebaseapp.com",
+            projectId: "medco-681ed",
+            storageBucket: "medco-681ed.appspot.com",
+            messagingSenderId: "741570851584",
+            appId: "1:741570851584:web:3cd86b080e3a7ba4b8b9e5"
+        };*/
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBiHBGtF-TttVLrBjVgmxZHQY9zNwFp9HE",
+            authDomain: "medco-8e8e9.firebaseapp.com",
+            projectId: "medco-8e8e9",
+            storageBucket: "medco-8e8e9.firebasestorage.app",
+            messagingSenderId: "838485203869",
+            appId: "1:838485203869:web:8c8d1daa5272de405ded74",
+            measurementId: "G-4X3391WVHC"
+        };
+
+
+        // Inicializa o Firebase
+        const app = initializeApp(firebaseConfig);
+
+        // Inicializa o App Check com o reCAPTCHA v3
+        const appCheck = initializeAppCheck(app, {
+            provider: new ReCaptchaV3Provider('6LdfIXEqAAAAAFGnMQkS7ObJEdEUCszB2G9D6Jqo'),
+            isTokenAutoRefreshEnabled: true
+        });
+
+        // Função para obter o token do App Check
+        const getAppCheckToken = async () => {
+            try {
+                const tokenResponse = await getToken(appCheck);
+                console.log('  Token:', tokenResponse.token);
+                // Exibe o token no HTML
+                document.getElementById('appCheckToken').innerText = tokenResponse.token;
+            } catch (error) {
+                console.error('Error getting App Check token:', error);
+            }
+        };
+
+        // Função para obter o token Bearer usando email e senha
+        const getBearerToken = async (email, password) => {
+            const apiKey = "AIzaSyDHBDXzhlI7dFHKdvSX3n81PZHHPfIEW2Y";//dev
+            //const apiKey = "AIzaSyBbE5FF2LeIHKDxeL7KSahCASQq5Gwrl5U"; //localhost
+            const url = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${apiKey}`;
+            const data = {
+                email: email,
+                password: password,
+                returnSecureToken: true
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const jsonResponse = await response.json();
+                console.log('Bearer Token:', jsonResponse.idToken);
+                // Exibe o token no HTML
+                document.getElementById('bearerToken').innerText = jsonResponse.idToken;
+            } catch (error) {
+                console.error('Error getting Bearer token:', error);
+            }
+        };
+
+        // Chame a função para obter o token do App Check
+        getAppCheckToken();
+
+        // Chame a função para obter o Bearer token usando email e senha
+        getBearerToken("jaquelinesgonzaga@gmail.com", "UsuarioTeste01");
+        //getBearerToken("coding4world.com@gmail.com", "Fotonla4@forever");//localhost
+    </script>
+</head>
+<body>
+    <h1>Firebase App Check Example</h1>
+    <p><strong>x-Medco-AppCheck Token:</strong> <span id="appCheckToken">Aguardando token...</span></p>
+    <p><strong>Bearer Token:</strong> <span id="bearerToken">Aguardando token...</span></p>
+</body>
+</html>

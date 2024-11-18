@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Firebase App Check Example</title>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+        import { initializeAppCheck, ReCaptchaV3Provider, getToken } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app-check.js";
+
+        const loadEnv = async () => {
+            try {
+                const response = await fetch('http://localhost:3000/env'); // Altere para o backend correto
+                if (!response.ok) throw new Error('Failed to load env variables');
+                return await response.json();
+            } catch (error) {
+                console.error('Error loading env variables:', error);
+            }
+        };
+
+        const initializeTool = async () => {
+            const env = await loadEnv();
+            if (!env) return;
+
+            const firebaseConfig = env.firebaseConfig;
+
+            // Inicializa o Firebase
+            const app = initializeApp(firebaseConfig);
+
+            // Inicializa o App Check
+            const appCheck = initializeAppCheck(app, {
+                provider: new ReCaptchaV3Provider(env.recaptchaKey),
+                isTokenAutoRefreshEnabled: true,
+            });
+
+            // Obtém App Check Token
+            const getAppCheckToken = async () => {
+                try {
+                    const tokenResponse = await getToken(appCheck);
+                    console.log('App Check Token:', tokenResponse.token);
+                    document.getElementById('appCheckToken').innerText = tokenResponse.token;
+                } catch (error) {
+                    console.error('Error getting App Check token:', error);
+                }
+            };
+
+            // Obtém Bearer Token
+            const getBearerToken = async () => {
+                const url = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${firebaseConfig.apiKey}`;
+                const data = {
+                    email: env.email,
+                    password: env.password,
+                    returnSecureToken: true,
+                };
+
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data),
+                    });
+
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    const jsonResponse = await response.json();
+                    console.log('Bearer Token:', jsonResponse.idToken);
+                    document.getElementById('bearerToken').innerText = jsonResponse.idToken;
+                } catch (error) {
+                    console.error('Error getting Bearer token:', error);
+                }
+            };
+
+            await getAppCheckToken();
+            await getBearerToken();
+        };
+
+        initializeTool();
+    </script>
+</head>
+<body>
+    <h1>Firebase App Check Example</h1>
+    <p><strong>x-Medco-AppCheck Token:</strong> <span id="appCheckToken">Aguardando token...</span></p>
+    <p><strong>Bearer Token:</strong> <span id="bearerToken">Aguardando token...</span></p>
+</body>
+</html>
