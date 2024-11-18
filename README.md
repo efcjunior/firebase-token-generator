@@ -1,10 +1,10 @@
-Aqui está o **README.md** para o seu projeto, orientando os desenvolvedores a rodarem localmente:
-
----
-
 # AppCheckFirebase
 
-Este projeto é uma ferramenta para gerar tokens `App Check` e `Bearer` do Firebase, permitindo que desenvolvedores reutilizem esses tokens para desenvolvimento e testes.
+Este projeto é uma ferramenta para gerar tokens **App Check** e **Bearer** do Firebase, permitindo que desenvolvedores reutilizem esses tokens para desenvolvimento e testes.
+
+> **Nota Importante:** O token **App Check** gerado por esta ferramenta é configurado para o **provedor Web** (ReCAPTCHA v3). Certifique-se de usar as chaves e configurações adequadas para o ambiente correto.
+
+---
 
 ## 🚀 Configuração do Ambiente Local
 
@@ -56,6 +56,8 @@ USER_PASSWORD=SUA_SENHA
 
 > **Nota:** Nunca compartilhe o arquivo `.env` em repositórios públicos. Certifique-se de que ele está no `.gitignore`.
 
+---
+
 ### 5. Execute o Projeto
 
 Inicie o servidor local com o seguinte comando:
@@ -74,7 +76,11 @@ O servidor estará disponível em:
 1. Abra o navegador e acesse:  
    **http://localhost:3000/index.html**
 
-2. O aplicativo carregará os tokens `App Check` e `Bearer`, que serão exibidos na tela.
+2. O aplicativo carregará:
+   - **Token App Check**: Usado para autenticar requisições do **provedor Web (ReCAPTCHA v3)**.
+   - **Token Bearer**: Usado para autenticação em APIs do Firebase.
+
+3. Os tokens serão exibidos diretamente na tela.
 
 ---
 
@@ -115,7 +121,9 @@ APP_CHECK_FIREBASE/
 
 ## ✨ Funcionalidades
 
-- Geração de tokens `App Check` e `Bearer` do Firebase.
+- Geração de tokens:
+  - **App Check**: Gera tokens válidos para o **provedor Web (ReCAPTCHA v3)** do Firebase.
+  - **Bearer**: Gera tokens de autenticação para APIs Firebase.
 - Configuração de chaves sensíveis através de variáveis de ambiente.
 - Compatível para rodar localmente ou no Vercel.
 
